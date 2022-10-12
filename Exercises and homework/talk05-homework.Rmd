@@ -32,10 +32,10 @@ knit: (
 
 ## Talk05 内容回顾
 
--   dplyr 、 tidyr (超级强大的数据处理) part 1
-    -   长宽数据转换
-    -   dplyr 几个重要函数
-
+* dplyr 、 tidyr (超级强大的数据处理)  part 1
+  * 长宽数据转换
+  * dplyr 几个重要函数
+  
 ## 练习与作业：用户验证
 
 请运行以下命令，验证你的用户名。
@@ -51,10 +51,10 @@ Sys.getenv("HOME")
 
 ------------------------------------------------------------------------
 
-### **使用 mouse.tibble 变量做统计**
+###   **使用 mouse.tibble 变量做统计**
 
--   每个染色体（或scaffold）上每种基因类型的数量、平均长度、最大和最小长度，挑出最长和最短的基因
--   去掉含有500以下基因的染色体（或scaffold），按染色体（或scaffold）、数量 高 -\> 低 进行排序
+  * 每个染色体（或scaffold）上每种基因类型的数量、平均长度、最大和最小长度，挑出最长和最短的基因
+  * 去掉含有500以下基因的染色体（或scaffold），按染色体（或scaffold）、数量 高 -> 低 进行排序
 
 **挑战题（可选做）：**
 
@@ -67,8 +67,9 @@ Sys.getenv("HOME")
 
 ------------------------------------------------------------------------
 
-### **使用 `grades` 变量做练习**
+###   **使用 grades 变量做统计**
 
+<<<<<<< HEAD
 1.  装入`grades`变量；
 
 `library(dplyr);`
@@ -76,12 +77,33 @@ Sys.getenv("HOME")
 `grades <- read_tsv( file = "data/talk05/grades.txt" );`
 
 2.  尝试使用`spread`和`gather`函数将其变宽后再变长；
+=======
+首先，用下面命令生成 `grades`变量：
+
+```
+grades <- tibble( "Name" = c("Weihua Chen", "Mm Hu", "John Doe", "Jane Doe",
+                             "Warren Buffet", "Elon Musk", "Jack Ma"),
+                  "Occupation" = c("Teacher", "Student", "Teacher", "Student", 
+                                   rep( "Entrepreneur", 3 ) ),
+                  "English" = sample( 60:100, 7 ),
+                  "ComputerScience" = sample(80:90, 7),
+                  "Biology" = sample( 50:100, 7),
+                  "Bioinformatics" = sample( 40:90, 7)
+                  );
+```
+
+然后统计：
+1. 每个人最差的学科和成绩分别是什么？
+2. 哪个职业的平均成绩最好？
+3. 每个职业的最佳学科分别是什么（按平均分排序）？？？ 
+>>>>>>> parent of cf208ae (updated homework talk 05 and 04)
 
 ```{r}
 ## 代码写这里，并运行；
 
 ```
 
+<<<<<<< HEAD
 3.  研究并使用 `tidyr`包里的 `pivot_longer` 和 `pivot_wider` 函数对 `grades` 变量进行宽长转换；
 
 ```{r}
@@ -101,11 +123,14 @@ Sys.getenv("HOME")
 `grades %>% complete( name, course )`
 
 答：
+=======
+>>>>>>> parent of cf208ae (updated homework talk 05 and 04)
 
 ------------------------------------------------------------------------
 
-### **使用 grades2 变量做练习**
+###   **使用 `starwars` 变量做计算**
 
+<<<<<<< HEAD
 首先，用下面命令生成 `grades2`变量：
 
 ``` r
@@ -121,28 +146,27 @@ grades2 <- tibble( "Name" = c("Weihua Chen", "Mm Hu", "John Doe", "Jane Doe",
 ```
 
 然后统计： 1. 每个人最差的学科和成绩分别是什么？ 2. 哪个职业的平均成绩最好？ 3. 每个职业的最佳学科分别是什么（按平均分排序）？？？
+=======
+1. 计算每个人的 BMI；
+2. 挑选出 肥胖（BMI >= 30）的人类，并且只显示其 `name`, `sex` 和 `homeworld`；
+>>>>>>> parent of cf208ae (updated homework talk 05 and 04)
 
 ```{r}
 ## 代码写这里，并运行；
 
 ```
 
-------------------------------------------------------------------------
-
-### **使用 `starwars` 变量做计算**
-
-1.  计算每个人的 BMI；
-2.  挑选出 肥胖（BMI \>= 30）的人类，并且只显示其 `name`, `sex` 和 `homeworld`；
+3. 挑选出所有人类；
+4. 按BMI将他们分为三组， <18, 18~25, >25，统计每组的人数，并用 barplot 进行展示；注意：展示时三组的按BMI从小到大排序；
+5. 改变排序方式，按每组人数从小到大排序；
 
 ```{r}
 ## 代码写这里，并运行；
 
 ```
 
-3.  挑选出所有人类；
-4.  按BMI将他们分为三组， \<18, 18\~25, \>25，统计每组的人数，并用 barplot 进行展示；注意：展示时三组的按BMI从小到大排序；
-5.  改变排序方式，按每组人数从小到大排序；
 
+<<<<<<< HEAD
 ```{r}
 ## 代码写这里，并运行；
 
@@ -190,3 +214,5 @@ grades2 <- tibble( "Name" = c("Weihua Chen", "Mm Hu", "John Doe", "Jane Doe",
 -   如果 `Wt` \> 72.57，为 'Middleweight'，否则
 -   如果 `Wt` \> 66.68，为 'Light-middleweight'
 -   其它值，为 'Welterweight'
+=======
+>>>>>>> parent of cf208ae (updated homework talk 05 and 04)
