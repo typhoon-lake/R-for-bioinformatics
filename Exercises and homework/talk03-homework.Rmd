@@ -84,11 +84,12 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 先生成前三列；
-
+bbq=data.frame(Age=c(25,31,23,52,76,49,26),Height=c(177,163,190,179,163,183,164),Weight=c(57,69,83,75,70,83,53))
+row.names(bbq)<-c('Alex','Lilly','Mark','Oliver','Martha','Lucas','Caroline')
 ## 再插入第四列
-
+bbq<-cbind(bbq,Sex=c('F','F','M','M','F','M','F'))
 ## 显示最终结果
-
+bbq
 ```
 
 ------------------------------------------------------------------------
@@ -99,11 +100,12 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 生成 data.frame
-
+bbq=data.frame(Working=c('Yes','No','No','Yes','Yes','No','Yes'),   row.names=c('Alex','Lilly','Mark','Oliver','Martha','Lucas','Caroline'))
 ## 显示结果
-
+row
+bbq
 ## 显示 Working 列的性质
-
+str(bbq)
 ```
 
 ------------------------------------------------------------------------
@@ -112,6 +114,8 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+state.center
+as.data.frame( state.center );
 ```
 
 ------------------------------------------------------------------------
@@ -120,7 +124,9 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+bbq=matrix(1:250,nrow=50,ncol=5)
+rownames(bbq)=paste('row',1:50,sep = '_')
+bbq
 ```
 
 ------------------------------------------------------------------------
@@ -135,7 +141,9 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+class(VADeaths)
+VADeaths<-cbind(VADeaths,Total=rowSums(VADeaths))
+VADeaths[,c('Total','Rural Male','Rural Female','Urban Male','Urban Female')]
 ```
 
 ------------------------------------------------------------------------
@@ -150,7 +158,10 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+bbq<-swiss[c(1,2,3,10,11,12,13),c('Examination','Education','Infant.Mortality')]
+bbq['Sarine','Infant.Mortality']<-NA
+bbq<-cbind(bbq,Mean=rowSums(bbq)/3)
+bbq
 ```
 
 ------------------------------------------------------------------------
@@ -165,16 +176,18 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+Id <- LETTERS
+x <- seq(1,43,along.with=Id)
+y <- seq(-20,0,along.with=Id)
+bbq=head(cbind(Id,x,y))
+bbq
 ```
 
 **问：** `seq`函数中的`along.with` 参数的意义是什么？请举例说明。
-
-答：
-
+答：along.with：从这个参数的长度中取长度。（即期望最后展示的长度）  
 ```{r}
 ## 代码写这里，并运行；
-
+seq(1,11,along.with=c(1,2,3,4,5,6))
 ```
 
 ------------------------------------------------------------------------
@@ -208,7 +221,11 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+df2<-data.frame(Id=1:4,Sex=c('F','M','M','F'),Code=c('a','b','c','d'))
+df1<-data.frame(Id=1:4,Age=c(14,12,15,10))
+bbq<-head(cbind(df1,df2))
+bbq<-bbq[,-3]
+bbq
 ```
 
 ------------------------------------------------------------------------
@@ -217,7 +234,7 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+(bbq<-bbq[,-4])
 ```
 
 ------------------------------------------------------------------------
@@ -238,7 +255,10 @@ Sys.getenv("HOME")
     cbind(df3, newcol = 1:3);
 
 答：
-
+2可以
+3可以
+4可以
+5不可以
 ## 练习与作业2，`tibble`
 
 -   **运行以下代码，生成一个新的`tibble`：**
@@ -291,7 +311,10 @@ tibble(
 
 ```{r}
 ## 代码写这里，并运行；
-
+df <- tibble(x = runif(5),y = rnorm(5))
+df
+df[,'x']
+df[['y']]
 ```
 
 ------------------------------------------------------------------------
@@ -302,10 +325,11 @@ tibble(
 ## 代码写这里，并运行；
 ## 新tibble, with defined columns ... 创建表头
 tb <- tibble( name = character(), age = integer(), salary = double() );
-
 ##增加三行随机数据；
-
-
+tb<-add_row(tb,name='a',age=sample(1:100,1),salary=sample(1:100,1))
+tb<-add_row(tb,name='b',age=sample(1:100,1),salary=sample(1:100,1))
+tb<-add_row(tb,name='c',age=sample(1:100,1),salary=sample(1:100,1))
+tb
 ```
 
 ------------------------------------------------------------------------
@@ -319,11 +343,9 @@ tb <- tibble( name = character(), age = integer(), salary = double() );
 但下面这个不行：
 
 `tibble(a = 1:6, b = LETTERS[1:2]);`
-
 问：为什么？tibble 循环的规则是什么？
-
-答：
-
+答：tibble的循环仅限于长度为1或等长；而data.frame则为整除即
+可。
 ------------------------------------------------------------------------
 
 -   **`attach`和`detach`：**
@@ -331,7 +353,11 @@ tb <- tibble( name = character(), age = integer(), salary = double() );
 问：这个两个函数的用途是什么？请用 `iris` 这个系统自带变量举例说明。
 
 答：
-
+`attach`添加路径存储的索引；
+`detach`解除数据路径存储的绑定。
+使用attach(iris)后，程序就定位到iris数据框中，就可以直接用行名或列名来调用数据，
+如使用列名Sepal.Width直接来调用第二列的数据。
+而使用detach后以上定位就解除了，不能直接用行列名来调用数据。
 ------------------------------------------------------------------------
 
 -   **使用内置变量`airquality`：**
@@ -342,7 +368,8 @@ tb <- tibble( name = character(), age = integer(), salary = double() );
 
 ```{r}
 ## 代码写这里，并运行；
-
+str(airquality)
+as.tibble(airquality)
 ```
 
 ------------------------------------------------------------------------
@@ -350,16 +377,31 @@ tb <- tibble( name = character(), age = integer(), salary = double() );
 -   **问：`tibble::enframe`函数的用途是什么？请举例说明：**
 
 答：
-
+将tibble分解成一列或两列数据帧
 ------------------------------------------------------------------------
 
 -   **简述`tibble`相比`data.frame`的优势？并用实例展示**
 
 答：
-
+data.frame 在取 subset操作时，会造成困扰；而tibbleb不会，永远都是tibble。
+tibble 可以进行可控的数据类型转换。
 ```{r}
 ## 代码写这里，并运行；
+bbq <- list(x = 1:3, y = 3:0);
+tibble::enframe(bbq)
 
+
+
+
+df1 <- data.frame(x = 1:3, y = 3:1);
+class(df1[, 1:2]);
+class(df1[, 1]);
+df2 <- tibble(x = 1:3, y = 3:1);
+class(df2[, 1]); 
+
+
+
+class(df2[[1]]);
 ```
 
 ## 练习与作业3：IO
@@ -384,7 +426,25 @@ tb <- tibble( name = character(), age = integer(), salary = double() );
 
 ```{r}
 ## 用系统自带函数，并显示读取的内容；
-
+read.table('data/Table0.txt',header = F)
+read.table('data/Table1.txt',header = T)
+read.table('data/Table2.txt',header = TRUE,skip = 2,quote = '/')
+read.table('data/Table3.txt',header = TRUE,skip = 2,quote='/',na.strings = c('*','NA','**','--'))
+read.table('data/Table4.txt',na.strings = c('*','NA','**','--'),header = TRUE,dec=',')
+read.table('data/Table5.txt',header = TRUE,na.strings = c('*','NA','**','--'),sep=';',dec=',')
+read.table('data/Table6.txt',header = TRUE,skip=2)
+read.csv('data/states1.csv')
+read.csv2('data/states2.csv')
 ## 用readr 包的函数读取，并显示读取的内容；
-
+library(tidyverse)
+library(reader)
+read_table('data/Table0.txt')
+read_table('data/Table1.txt')
+read_table('data/Table2.txt',skip=2)
+read_table('data/Table3.txt',skip=2,na = c('*','**','--','NA'))
+read_table('data/Table4.txt',na = c('*','**','NA','--'))
+read_csv2('data/Table5.txt',na=c('*','**','NA','--'))
+read_table('data/Table6.txt',skip=2)
+read_csv('data/states1.csv')
+read_csv2('data/states2.csv')
 ```

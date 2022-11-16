@@ -32,17 +32,19 @@ knit: (
 
 ## talk07 内容回顾
 
-1. string basics
- * length
- * uppercase, lowercase
- * unite, separate
- * string comparisons, sub string
-2. regular expression
- * detect patterns
- * locate patterns
- * extract patterns
- * replace patterns
+1.  string basics
 
+-   length
+-   uppercase, lowercase
+-   unite, separate
+-   string comparisons, sub string
+
+2.  regular expression
+
+-   detect patterns
+-   locate patterns
+-   extract patterns
+-   replace patterns
 
 ## 练习与作业：用户验证
 
@@ -55,41 +57,50 @@ Sys.info()[["user"]]
 Sys.getenv("HOME")
 ```
 
-
 ## 练习与作业1：字符串操作
 
 ------------------------------------------------------------------------
 
-###   **用`stringr`包实现以下操作**
+### **用`stringr`包实现以下操作**
 
 使用变量： `x <- c('weihua', 'chen');`
 
-1. 每个element/成员的长度
-2. 每个成员首字母大写
-3. 取每个成员的前两个字符
-4. 合并为一个字符串，用 ', ' 间隔
-5. 数一下每个成员中`元音字母` （vowel letter）的数量
-
+1.  每个element/成员的长度
+2.  每个成员首字母大写
+3.  取每个成员的前两个字符
+4.  合并为一个字符串，用 ',' 间隔
+5.  数一下每个成员中`元音字母` （vowel letter）的数量
 
 ```{r}
 ## 代码写这里，并运行；
-
+library(stringr)
+x <- c('weihua', 'chen')
+str_length(x)
+str_extract(str_to_title(x), "[QWERTYUIOPASDFGHJKLZXCVBNM]")
+substr(x,start=1,stop=2)
+str_c(x,collapse = ",")
+str_count(x, "[aeiou]")
 ```
-
 
 ------------------------------------------------------------------------
 
-###   **用`mtcars`变量作练习**
+### **用`mtcars`变量作练习**
 
-1. 筛选出所有的奔驰车（Mercedes-Benz）；
-2. 筛选出所有非奔驰车；
-3. 处理行名，将其中的品牌与车型分开。比如：Mazda RX4 Wag => 'Mazda', 'RX4 Wag'
+1.  筛选出所有的奔驰车（Mercedes-Benz）；
+2.  筛选出所有非奔驰车；
+3.  处理行名，将其中的品牌与车型分开。比如：Mazda RX4 Wag =\> 'Mazda', 'RX4 Wag'
 
 ```{r}
 ## 代码写这里，并运行；
+cn<-rownames(mtcars)
+Merc<-str_subset(cn, "Merc\\b")
+mtcars[Merc,]
 
+otc<-setdiff(cn,Merc)
+mtcars[otc,]
+
+cn %>% str_split(" ", 2)
 ```
-
 
 **用`str_c`操作**
 
@@ -103,100 +114,156 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
-
+x <- c("abc", NA)
+x <- str_replace_na(x)
+str_c("|-",x,"-|")
 ```
-
-
-
 
 ## 练习与作业2：`regular expression 正则表达式练习`
 
 ------------------------------------------------------------------------
 
-###   **用`starwars`变量作练习**
+### **用`starwars`变量作练习**
 
 注：需要先导入 `tidyverse` 包；
 
-1. 选出所有 `skin_color` 包含为 `white` 的人，显示其`name`, `homeworld`, `species`和`skin_color`；注意：有些人的skin color 可为多个；
+1.  选出所有 `skin_color` 包含为 `white` 的人，显示其`name`, `homeworld`, `species`和`skin_color`；注意：有些人的skin color 可为多个；
 
-2. 打印出所有含有`ar`的名字；不区分大小写；
-
+2.  打印出所有含有`ar`的名字；不区分大小写；
 
 ```{r}
 ## 代码写这里，并运行；
+library(tidyverse)
+sw<-as.data.frame(starwars)
+sc<-sw[,5]
+wt<-str_subset(sc, "white\\b")
+starwars %>% filter(skin_color %in% wt)%>% 
+  summarise(name=name,
+              homeworld=homeworld,
+              species=species,
+              skin_color=skin_color)
 
+name<-sw[,1]
+name1<-str_subset(name, "ar")
+name2<-str_subset(name, "Ar")
+name3<-str_subset(name, "aR")
+name4<-str_subset(name, "AR")
+namear<- union(name4,union(name3,union(name1,name2)))
+namear
 ```
 
 ------------------------------------------------------------------------
 
-###   **用下面的`vec`变量作练习**
+### **用下面的`vec`变量作练习**
 
 `vec <- c( "123", "abc", "wei555hua666" );`
 
-1. 找出含有数字的字符串；
-2. 找出数字的位置；如果字符串含有多组数数字，只显示第一组；
-3. 找出所有数字的位置；
-4. 提取出找到的数字；如果字符串含有多组数数字，只提取第一组；
-5. 提取所有的数字；
-6. 将数字替换为 666；
+1.  找出含有数字的字符串；
+2.  找出数字的位置；如果字符串含有多组数数字，只显示第一组；
+3.  找出所有数字的位置；
+4.  提取出找到的数字；如果字符串含有多组数数字，只提取第一组；
+5.  提取所有的数字；
+6.  将数字替换为 666；
 
 ```{r}
 ## 代码写这里，并运行；
-
+vec <- c( "123", "abc", "wei555hua666" );
+vec %>% str_subset("\\d+")
+vec %>% str_locate("\\d+")
+vec %>% str_locate_all("\\d+")
+vec %>% str_extract("\\d+")
+vec %>% str_extract_all("\\d+")
+vec %>% str_replace("\\d+", "666")
 ```
 
 ## 练习与作业3：探索题
 
 ------------------------------------------------------------------------
 
-###   **序列分析**
+### **序列分析**
 
 用序列：`seq <- "ATCTCGGCGCGCATCGCGTACGCTACTAGC"` 实现以下分析；注：可使用任何包：
 
-1. 得到它的反向互补序列；
-2. 计算它的GC含量，用百分数表示；
-3. 把它拆分成一个个codon（即三个nucleotide形成一个codon；最后一个长度可以不为3；
-
+1.  得到它的反向互补序列；
+2.  计算它的GC含量，用百分数表示；
+3.  把它拆分成一个个codon（即三个nucleotide形成一个codon；最后一个长度可以不为3；
 
 ```{r}
 ## 代码写这里，并运行；
+seq <- "ATCTCGGCGCGCATCGCGTACGCTACTAGC"
+seq1 <- str_replace_all(seq,"A","a")
+seq1 <- str_replace_all(seq,"T","t")
+seq1 <- str_replace_all(seq,"C","c")
+seq1 <- str_replace_all(seq,"G","g")
+seq1 <- str_replace_all(seq,"a","T")
+seq1 <- str_replace_all(seq,"c","G")
+seq1 <- str_replace_all(seq,"t","A")
+seq1 <- str_replace_all(seq,"g","C")
+seq1
 
+g <- seq %>% str_count("G")
+c <- seq %>% str_count("C")
+gc=(g+c)*100/str_length(seq)
+str_c(gc,"%")
+
+seq %>% str_extract_all("[ATCG]{3}")
 ```
 
-###   **问答**
+### **问答**
 
 问：`stringr::str_pad` 的作用是什么？请举例回答
 
-答：
+答：把字符串填充为指定的长度。例子： n \<- "Species" str_pad(n,10) [1] " Species"
 
 ### **提取字符串中的N次重复字段**
 
 问：如何用正则表达式从字符串中提取任意长度为2字符的两次以上重复，比如：`1212`, `abab`, `tata`, 是 `12` 等的两次重复， `898989` 则是89的3次重复，以下面的变量为输入：
 
-` c( "banana", "coconut", "1232323", "database" ) `
+`c( "banana", "coconut", "1232323", "database" )`
 
 ```{r}
 ## 代码写这里，并运行；
-
+chongfu<-c( "banana", "coconut", "1232323", "database" )
+i=1
+j=1
+l=1
+k=c("","")
+while(1) {
+  while (1) {
+    aaa<-chongfu[i]
+    aaa1<-substring(aaa,j)
+    bbb1<-substring(aaa,j+2)
+    a<-substr(aaa1,start=1,stop=2)
+    b<-substr(bbb1,start=1,stop=2)
+    if(a==b) {
+      k[l]<-paste(a,b,sep="")
+      l=l+1
+    }
+  j=j+1
+  if(j>=str_length(aaa)-2)break
+  }
+ i=i+1
+ j=1
+ if(i>4)break
+}
+k
 ```
 
 ### **正则表达式**
 
 设计一个正则表达式，可以完整识别所有以下格式的数字
 
-```
-123
-123.45
-0.124
--1.5
--0.2
-+1.3
--11
--199.62
-```
+    123
+    123.45
+    0.124
+    -1.5
+    -0.2
+    +1.3
+    -11
+    -199.62
 
 ```{r}
 ## 代码写这里，并运行；
-
+num=c("123","123.45","0.124","-1.5","-0.2","+1.3","-11","-199.62")
+num %>% str_extract("[+-1234567890.]+")
 ```
-

@@ -71,7 +71,45 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+library(tidyverse)
+library(dbplyr)
+library(ggplot2)
+library(ggforce)
+    abu <- 
+      read_delim(
+        file = "../data/talk06/relative_abundance_for_RUN_ERR1072629_taxonlevel_species.txt",
+        delim = "\t", quote = "", comment = "#");
+fengdu<-abu %>% summarise(scientific_name=scientific_name,
+                  relative_abundance=relative_abundance)%>%  arrange(-relative_abundance)
+shenme<-head(fengdu,n=5L)
+kkk<-abu %>% summarise(zonghe=mean(relative_abundance)*122)
+lll<-shenme %>% summarise(zonghe=mean(relative_abundance)*5)
+Qita=kkk-lll
+shenme<-shenme%>%add_row(scientific_name="Qita",relative_abundance=as.numeric(Qita))
+shenme
 
+A<-as.data.frame(shenme)
+ggplot()+
+  theme(panel.grid.major = element_blank(),
+        panel.grid.minor = element_blank(),
+        axis.ticks = element_blank(), 
+        axis.text.y = element_blank(),
+        axis.text.x = element_blank(),
+        legend.title=element_blank(), 
+        panel.border = element_blank(),
+        panel.background = element_blank())+
+  xlab("")+ylab('')+
+  geom_arc_bar(data=A,
+               stat = "pie",
+               aes(x0=0,y0=0,r0=1,r=2,
+                   amount=relative_abundance,fill=scientific_name)
+  )+
+  annotate("text",x=1,y=1,label="24.3",angle=0)+
+  annotate("text",x=1.1,y=-0.9,label="21.9",angle=0)+
+  annotate("text",x=-0.4,y=-1.4,label="16.9",angle=0)+
+  annotate("text",x=-1.4,y=-0.5,label="11.5",angle=0)+
+  annotate("text",x=-1.5,y=0.2,label="5.87",angle=0)+
+  annotate("text",x=-0.9,y=1.1,label="19.5",angle=0)
 ```
 
 ------------------------------------------------------------------------
@@ -93,21 +131,47 @@ ggplot(starwars, aes(x = hair_color)) +
 
 ```{r}
 ## 代码写这里，并运行；
-
+library(dplyr)
+library(ggplot2)
+library(forcats)
+starwars %>%  
+  count(hair_color) %>% 
+  mutate(hair_color=fct_reorder(hair_color,n)) %>%
+  ggplot(aes(hair_color, n)) + 
+  geom_col()+coord_flip()
 ```
 
 2.  统计 `skin_color` 时，将出现频率小于0.05（即5%）的颜色归为一类`Others`，按出现次数排序后，做与上面类似的 barplot；
 
 ```{r}
 ## 代码写这里，并运行；
-
+library(dplyr)
+library(ggplot2)
+library(forcats)
+dat_skin<-starwars %>%
+  mutate(skin_color = fct_lump(skin_color, prop = .05, other_level = "others")) %>%
+  count(skin_color, sort = TRUE)
+dat_skin %>% 
+mutate(skin_color=fct_reorder(skin_color,n)) %>%
+ggplot(aes(skin_color, n)) + 
+geom_col()+coord_flip()
 ```
 
 3.  使用 `2` 的统计结果，但画图时，调整 bar 的顺序，使得 `Others` 处于第4的位置上。提示，可使用 `fct_relevel` 函数；
 
 ```{r}
 ## 代码写这里，并运行；
-
+library(dplyr)
+library(ggplot2)
+library(forcats)
+dat_skin<-starwars %>%
+  mutate(skin_color = fct_lump(skin_color, prop = .05, other_level = "others")) %>%
+  count(skin_color, sort = TRUE)
+dat_skin %>% 
+mutate(skin_color=fct_reorder(skin_color,n)) %>%
+  mutate(skin_color=fct_relevel(skin_color,"others",after = 3)) %>%
+ggplot(aes(skin_color, n)) + 
+geom_col()+coord_flip()
 ```
 
 ## 练习与作业2：数据分析
@@ -127,7 +191,23 @@ ggplot(starwars, aes(x = hair_color)) +
 
 ```{r}
 ## 代码写这里，并运行；
+ppi <- read_delim( file = "../data/talk06/ppi900.txt.gz", col_names = T, 
+                       delim =  "\t", quote = "" );
 
+toppart <- ppi %>% filter( gene1 == "SALL4" ) %>%
+arrange( desc( score ) ) %>% slice( 1:10 );
+
+genes <- unique( c( "SALL4", toppart$gene2 ) );
+netdata <- ppi %>% filter( gene1 %in% genes & gene2 %in% genes );
+nrow(netdata);
+
+if (!require("igraph")){
+chooseCRANmirror();
+install.packages("igraph");
+}
+library( igraph );
+netnet <- graph_from_data_frame( netdata, directed = FALSE );
+plot(netnet);
 ```
 
 ### **对宏基因组 相对丰度数据 进行分析**
@@ -150,5 +230,36 @@ ggplot(starwars, aes(x = hair_color)) +
 
 ```{r}
 ## 代码写这里，并运行；
+library(tidyverse)
+txt1<-read_table('data/talk06/relative_abundance_for_curated_sample_PRJEB6070-DE-073_at_taxonlevel_species.txt',skip=3)
+txt2<-read_table('data/talk06/relative_abundance_for_curated_sample_PRJEB6070-DE-074_at_taxonlevel_species.txt',skip=3)
+txt3<-read_table('data/talk06/relative_abundance_for_curated_sample_PRJEB6070-DE-075_at_taxonlevel_species.txt',skip=3)
+txt4<-read_table('data/talk06/relative_abundance_for_curated_sample_PRJEB6070-DE-076_at_taxonlevel_species.txt',skip=3)
+txt5<-read_table('data/talk06/relative_abundance_for_curated_sample_PRJEB6070-DE-077_at_taxonlevel_species.txt',skip=3)
 
+txt1_a<-txt1 %>% summarise(scientific_name=scientific_name,
+                           relative_abundance=taxon_rank_level)
+txt2_a<-txt2 %>% summarise(scientific_name=scientific_name,
+                           relative_abundance=taxon_rank_level)
+txt3_a<-txt3 %>% summarise(scientific_name=scientific_name,
+                           relative_abundance=taxon_rank_level)
+txt4_a<-txt4 %>% summarise(scientific_name=scientific_name,
+                           relative_abundance=taxon_rank_level)
+txt5_a<-txt5 %>% summarise(scientific_name=scientific_name,
+                           relative_abundance=taxon_rank_level)
+
+txt1_a<-add_column(txt1_a,sample_name = "PRJEB6070-DE-073")
+txt2_a<-add_column(txt2_a,sample_name = "PRJEB6070-DE-074")
+txt3_a<-add_column(txt3_a,sample_name = "PRJEB6070-DE-075")
+txt4_a<-add_column(txt4_a,sample_name = "PRJEB6070-DE-076")
+txt5_a<-add_column(txt5_a,sample_name = "PRJEB6070-DE-077")
+
+a12<-full_join(txt1_a,txt2_a)
+a123<-full_join(a12,txt3_a)
+a1234<-full_join(a123,txt4_a)
+txt_a<-full_join(a1234,txt5_a)
+txt_a
+
+txt_a[is.na(txt_a)]=0
+txt_a
 ```

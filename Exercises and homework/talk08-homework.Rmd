@@ -62,7 +62,29 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+for(i in 1:7){print(i*i)}
 
+for (n in names(iris)) {print(paste(n, " (", nchar(n), ")"))}
+
+while (1) {
+  x=rnorm(1)
+  print(x)
+  if(x>1)break
+}
+
+x=0
+y=1
+i=0
+while(1){
+  if(y>1000000){
+    print(i)
+    break
+  }
+  i=i+1
+  c=y
+  y=x+y
+  x=c
+}
 ```
 
 
@@ -84,7 +106,27 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+library(tidyverse)
+df<-matrix(rnorm(100*100, 2, 4), nrow = 100)
 
+rowMeans( df )
+colMeans( df )
+
+df %>% apply( ., 1, mean )
+df %>% apply( ., 2, mean )
+
+rowSums( df )
+colSums( df )
+
+df %>% apply( ., 1, sum )
+df %>% apply( ., 2, sum )
+
+df %>% apply( ., 1, function(x) {
+return( c(  mean = mean(x), sum = sum(x) , sd=sd(x)) );
+} )
+df %>% apply( ., 2, function(x) {
+return( c(  mean = mean(x), sum = sum(x) , sd=sd(x)) );
+} )
 ```
 
 ------------------------------------------------------------------------
@@ -101,7 +143,12 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+library(magrittr)
+mtcars %$% tapply( mpg, cyl, mean );
+mtcars %$% tapply( wt, cyl, mean );
 
+mtcars %>% group_by( cyl ) %>% summarise( mean = mean( mpg ) );
+mtcars %>% group_by( cyl ) %>% summarise( mean = mean( wt ) );
 ```
 
 ------------------------------------------------------------------------
@@ -116,7 +163,13 @@ Sys.getenv("HOME")
 
 ```{r}
 ## 代码写这里，并运行；
+list( a = 1:10, b = letters[1:5], c = LETTERS[1:8] ) %>%
+lapply( function(x) { length(x) } );
+list( a = 1:10, b = letters[1:5], c = LETTERS[1:8] ) %>% 
+sapply( function(x) { length(x) } );
 
+mtcars %>% lapply( mean );
+mtcars %>% sapply( mean );
 ```
 
 
@@ -144,7 +197,15 @@ df <- tibble(
 
 ```{r}
 ## 代码写这里，并运行；
-
+df <- tibble(
+  a = rnorm(10),
+  b = rnorm(10),
+  c = rnorm(10),
+  d = rnorm(10)
+)
+df %>% map_dbl( mean );
+df %>% map_dbl( sum );
+df %>% map_dbl( median );
 ```
 
 ------------------------------------------------------------------------
@@ -159,6 +220,8 @@ df <- tibble(
 ```{r}
 ## 代码写这里，并运行；
 
+mtcars %>% split( .$cyl ) %>% map( function(df) { cor.test( df$wt, df$mpg ) } ) %>% map_dbl( ~.$estimate );
+
 ```
 ------------------------------------------------------------------------
 
@@ -170,7 +233,12 @@ df <- tibble(
 
 ```{r}
 ## 代码写这里，并运行；
-
+iris1<-iris %>% 
+  keep(is.factor)
+head(iris1,n=10)
+iris2<-iris %>% 
+  discard(is.factor)
+head(iris2,n=10)
 ```
 ------------------------------------------------------------------------
 
@@ -186,6 +254,12 @@ c(1, 3, 5, 6, 10),
 
 ```{r}
 ## 代码写这里，并运行；
+vs <- list(
+c(1, 3, 5, 6, 10),
+c(1, 2, 3, 7, 8, 10),
+c(1, 2, 3, 4, 8, 9, 10)
+)
+vs %>% reduce(intersect)
 
 ```
 
@@ -204,7 +278,22 @@ dfs %>% reduce(full_join);
 ```
 ```{r}
 ## 代码写这里，并运行；
+dfs <- list(
+  age = tibble(name = "John", age = 30),
+  sex = tibble(name = c("John", "Mary"), sex = c("M", "F")),
+  trt = tibble(name = "Mary", treatment = "A")
+);
 
+dfs %>% reduce(full_join);
+
+M<-tribble(
+  ~name,~x,~y,
+  "John","age","30",
+  "John","sex","M",
+  "Mary","sex","F",
+  "Mary","treatment","A"
+)
+M %>% spread(x,y)
 ```
 
 ## 练习与作业4：并行计算
@@ -249,5 +338,6 @@ summary(unlist(res));
 
 ```{r}
 ## 代码写这里，并运行；
-
+print(16)
+print(6)
 ```
